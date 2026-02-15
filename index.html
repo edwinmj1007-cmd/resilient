@@ -19,7 +19,7 @@
             background-color: var(--bg-color);
             color: var(--text-main);
             overflow-x: hidden;
-            -webkit-tap-highlight-color: transparent; /* Mejora tacto en móvil */
+            -webkit-tap-highlight-color: transparent;
         }
         .header-font { font-family: 'Syncopate', sans-serif; letter-spacing: -0.05em; }
         
@@ -46,7 +46,7 @@
         .reveal { opacity: 0; transform: translateY(30px); transition: all 1s ease; }
         .reveal.active { opacity: 1; transform: translateY(0); }
 
-        .nav-link { position: relative; transition: opacity 0.3s; }
+        .nav-link { position: relative; transition: opacity 0.3s; opacity: 0.5; }
         .nav-link.active { opacity: 1; color: #fff; font-weight: bold; }
         .nav-link.active::after {
             content: ''; position: absolute; bottom: -5px; left: 0; 
@@ -59,8 +59,8 @@
             white-space: nowrap; user-select: none;
         }
 
-        .size-chip, .garment-chip {
-            padding: 10px 14px; /* Aumentado para móviles */
+        .size-chip, .garment-chip, .view-chip {
+            padding: 10px 14px;
             border: 1px solid rgba(255,255,255,0.1);
             font-size: 10px;
             cursor: pointer;
@@ -68,14 +68,13 @@
             text-align: center;
             text-transform: uppercase;
         }
-        .size-chip.active, .garment-chip.active {
+        .size-chip.active, .garment-chip.active, .view-chip.active {
             background: white;
             color: black;
             border-color: white;
             font-weight: bold;
         }
 
-        /* Input Range personalizado para móviles */
         input[type=range]::-webkit-slider-thumb {
             -webkit-appearance: none;
             height: 20px;
@@ -87,7 +86,8 @@
         }
 
         #entityImage {
-            transition: opacity 0.5s ease-in-out;
+            transition: opacity 0.4s ease-in-out, transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+            background: #111; 
         }
     </style>
 </head>
@@ -95,9 +95,9 @@
 
     <div class="scan-line"></div>
 
-    <!-- Navegación Sticky -->
+    <!-- Navegación -->
     <nav class="fixed top-0 w-full z-[100] glass-panel px-4 md:px-12 py-4 md:py-5 flex justify-between items-center border-b border-white/5">
-        <div class="header-font font-black text-lg md:text-xl flex items-center gap-3 cursor-pointer" onclick="window.scrollTo(0,0)">
+        <div class="header-font font-black text-lg md:text-xl flex items-center gap-3 cursor-pointer" onclick="window.scrollTo({top: 0, behavior: 'smooth'})">
             <span class="w-2 h-2 bg-white rounded-full"></span>
             RESILIENT<span class="opacity-20">®</span>
         </div>
@@ -106,7 +106,6 @@
             <a href="#view-home" class="nav-link active">Home</a>
             <a href="#view-collection" class="nav-link">Catalog</a>
             <a href="#view-specs" class="nav-link">Fit_Lab</a>
-            <a href="#view-materials" class="nav-link">Tech</a>
             <a href="#view-terminal" class="nav-link">Pay</a>
         </div>
 
@@ -178,11 +177,24 @@
                     </div>
                 </div>
 
-                <!-- Imagen Principal -->
+                <!-- Imagen Principal con Selector de Partes/Vistas -->
                 <div class="lg:col-span-5 order-1 lg:order-2 reveal">
-                    <div class="glass-panel aspect-[4/5] overflow-hidden relative">
-                        <img id="entityImage" src="" class="w-full h-full object-cover">
-                        <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent"></div>
+                    <div class="relative group">
+                        <div class="glass-panel aspect-[4/5] overflow-hidden relative">
+                            <img id="entityImage" src="https://via.placeholder.com/800x1000/111/fff?text=RESILIENT+ENTITY" class="w-full h-full object-cover">
+                            <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent"></div>
+                            
+                            <div class="absolute bottom-4 left-4">
+                                <span id="viewLabel" class="text-[8px] bg-white text-black px-2 py-1 font-bold uppercase tracking-widest">FRONT_VIEW</span>
+                            </div>
+                        </div>
+
+                        <!-- SELECTOR DE VISTAS (Partes de la prenda) -->
+                        <div class="grid grid-cols-3 gap-2 mt-4" id="viewSelector">
+                            <div class="view-chip active" data-view="front" onclick="selectView('front')">FRONT</div>
+                            <div class="view-chip" data-view="back" onclick="selectView('back')">BACK</div>
+                            <div class="view-chip" data-view="detail" onclick="selectView('detail')">DETAIL</div>
+                        </div>
                     </div>
                 </div>
 
@@ -207,7 +219,7 @@
     <!-- FIT LAB -->
     <section id="view-specs" class="min-h-screen py-20 md:py-32 px-4 md:px-20 bg-neutral-900/20">
         <div class="max-w-6xl mx-auto">
-            <div class="flex flex-col md:flex-row justify-between items-center md:items-end mb-12 md:mb-20 reveal">
+            <div class="flex flex-col md:flex-row justify-between items-center md:items-end mb-12 md:20 reveal">
                 <h2 class="header-font text-4xl md:text-6xl font-black uppercase italic">Fit_Lab</h2>
                 <p class="text-[9px] md:text-[10px] tracking-[0.3em] md:tracking-[0.5em] opacity-30 uppercase pb-2">Body Dimension Algorithm v2.1</p>
             </div>
@@ -281,30 +293,47 @@
     <div id="toast" class="fixed bottom-10 left-1/2 -translate-x-1/2 bg-white text-black px-8 py-4 text-[9px] md:text-[10px] font-bold uppercase tracking-[0.3em] translate-y-32 transition-transform duration-500 z-[1000] border-2 border-black whitespace-nowrap">Data_Copied_Successfully</div>
 
     <script>
+        // DB Completa con GOKU y rutas para múltiples vistas
         const DATABASE = {
             entities: {
                 broly: { 
                     name: "BROLY", 
                     desc: "ENTITY_01: Poder desatado. Fit masivo con construcción de hombros caídos.", 
-                    images: { tshirt: "BROLY.TSHIRT.png", tank: "BROLY.TANK.png", hoodie: "BROLY.HD.png" },
+                    images: { 
+                        tshirt: { front: "BROLY.TS.FRONT.png", back: "BROLY.TS.BACK.png", detail: "BROLY.TS.DET.png" },
+                        tank: { front: "BROLY.TK.FRONT.png", back: "BROLY.TK.BACK.png", detail: "BROLY.TK.DET.png" },
+                        hoodie: { front: "BROLY.HD.FRONT.png", back: "BROLY.HD.BACK.png", detail: "BROLY.HD.DET.png" }
+                    },
                     stats: [98, 95, 80, 90] 
                 },
                 jiren: { 
                     name: "JIREN", 
                     desc: "ENTITY_02: Fuerza absoluta. Diseño minimalista pero con densidad superior.", 
-                    images: { tshirt: "JIREN.TSHIRT.png", tank: "JIREN.TANK.png", hoodie: "JIREN.HD.png" },
+                    images: { 
+                        tshirt: { front: "JIREN.TS.FRONT.png", back: "JIREN.TS.BACK.png", detail: "JIREN.TS.DET.png" },
+                        tank: { front: "JIREN.TK.FRONT.png", back: "JIREN.TK.BACK.png", detail: "JIREN.TK.DET.png" },
+                        hoodie: { front: "JIREN.HD.FRONT.png", back: "JIREN.HD.BACK.png", detail: "JIREN.HD.DET.png" }
+                    },
                     stats: [95, 98, 70, 85] 
                 },
                 vegeta: { 
                     name: "VEGETA", 
                     desc: "ENTITY_03: Orgullo real. Acabados técnicos y costuras reforzadas.", 
-                    images: { tshirt: "VEGETA.TSHIRT.png", tank: "VEGETA.TANK.png", hoodie: "VEGETA.HD.png" },
+                    images: { 
+                        tshirt: { front: "VEGETA.TS.FRONT.png", back: "VEGETA.TS.BACK.png", detail: "VEGETA.TS.DET.png" },
+                        tank: { front: "VEGETA.TK.FRONT.png", back: "VEGETA.TK.BACK.png", detail: "VEGETA.TK.DET.png" },
+                        hoodie: { front: "VEGETA.HD.FRONT.png", back: "VEGETA.HD.BACK.png", detail: "VEGETA.HD.DET.png" }
+                    },
                     stats: [90, 85, 95, 95] 
                 },
                 goku: { 
                     name: "GOKU", 
                     desc: "ENTITY_04: Instinto dominado. El balance ideal entre comodidad y estilo.", 
-                    images: { tshirt: "GOKU.TSHIRT.png", tank: "GOKU.TANK.png", hoodie: "GOKU.HD.png" },
+                    images: { 
+                        tshirt: { front: "GOKU.TS.FRONT.png", back: "GOKU.TS.BACK.png", detail: "GOKU.TS.DET.png" },
+                        tank: { front: "GOKU.TK.FRONT.png", back: "GOKU.TK.BACK.png", detail: "GOKU.TK.DET.png" },
+                        hoodie: { front: "GOKU.HD.FRONT.png", back: "GOKU.HD.BACK.png", detail: "GOKU.HD.DET.png" }
+                    },
                     stats: [92, 90, 90, 100] 
                 },
             }
@@ -315,6 +344,7 @@
         let currentEntity = 'broly';
         let currentSize = 'M';
         let currentGarment = 'tshirt';
+        let currentView = 'front';
 
         window.onload = () => {
             renderCatalogButtons();
@@ -339,6 +369,16 @@
             updateActiveButton();
         }
 
+        // Nueva función para seleccionar la vista (FRONT, BACK, DETAIL)
+        function selectView(view) {
+            currentView = view;
+            document.querySelectorAll('.view-chip').forEach(c => {
+                c.classList.toggle('active', c.getAttribute('data-view') === view);
+            });
+            document.getElementById('viewLabel').innerText = `${view.toUpperCase()}_VIEW`;
+            updateEntityVisuals();
+        }
+
         function selectGarment(type) {
             currentGarment = type;
             document.querySelectorAll('.garment-chip').forEach(c => {
@@ -355,18 +395,29 @@
             document.getElementById('entityDesc').innerText = data.desc;
             updateEntityVisuals();
             updateActiveButton();
-            radarChart.data.datasets[0].data = data.stats;
-            radarChart.update();
+            if(radarChart) {
+                radarChart.data.datasets[0].data = data.stats;
+                radarChart.update();
+            }
             updatePrice();
         }
 
         function updateEntityVisuals() {
             const imgElement = document.getElementById('entityImage');
-            const newSrc = DATABASE.entities[currentEntity].images[currentGarment];
-            imgElement.style.opacity = "0.2";
+            const data = DATABASE.entities[currentEntity];
+            // Ahora busca la imagen según Prenda y Vista actual
+            const newSrc = data.images[currentGarment][currentView];
+            
+            imgElement.style.opacity = "0";
+            imgElement.style.transform = "scale(1.05)";
+            
             setTimeout(() => {
                 imgElement.src = newSrc;
+                imgElement.onerror = () => {
+                    imgElement.src = `https://via.placeholder.com/800x1000/111/fff?text=${data.name}+${currentGarment}+${currentView}`;
+                };
                 imgElement.style.opacity = "1";
+                imgElement.style.transform = "scale(1)";
             }, 150);
         }
 
@@ -380,6 +431,10 @@
             currentSize = size;
             document.querySelectorAll('#catalogSizeSelector .size-chip').forEach(c => {
                 c.classList.toggle('active', c.innerText === size);
+            });
+            document.querySelectorAll('.size-row').forEach(row => {
+               if(row.innerText.includes(`SIZE_${size}`)) row.classList.add('bg-white/10');
+               else row.classList.remove('bg-white/10');
             });
         }
 
@@ -419,15 +474,18 @@
         }
 
         function calculateFit() {
-            const h = document.getElementById('rangeHeight').value;
-            const w = document.getElementById('rangeWeight').value;
+            const h = parseInt(document.getElementById('rangeHeight').value);
+            const w = parseInt(document.getElementById('rangeWeight').value);
             document.getElementById('valHeight').innerText = h;
             document.getElementById('valWeight').innerText = w;
+            
             let res = "SIZE_S";
             if (h > 185 || w > 85) res = "SIZE_XL";
             else if (h > 175 || w > 75) res = "SIZE_L";
             else if (h > 165 || w > 65) res = "SIZE_M";
+            
             document.getElementById('fitResult').innerText = res;
+            selectSize(res.split('_')[1]);
         }
 
         function copyValue(val) {
@@ -452,7 +510,7 @@
             window.addEventListener('scroll', () => {
                 let current = "";
                 sections.forEach(section => {
-                    if (pageYOffset >= section.offsetTop - 150) current = section.getAttribute('id');
+                    if (window.pageYOffset >= section.offsetTop - 150) current = section.getAttribute('id');
                 });
                 navLinks.forEach(link => {
                     link.classList.remove('active');
@@ -469,6 +527,4 @@
         }
     </script>
 </body>
-
 </html>
-
