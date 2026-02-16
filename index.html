@@ -75,6 +75,29 @@
             font-weight: bold;
         }
 
+        .color-swatch {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            cursor: pointer;
+            position: relative;
+            transition: all 0.3s ease;
+            border: 1px solid rgba(255,255,255,0.2);
+        }
+        .color-swatch::after {
+            content: '';
+            position: absolute;
+            inset: -5px;
+            border: 1px solid transparent;
+            border-radius: 50%;
+            transition: all 0.3s ease;
+        }
+        .color-swatch.active::after {
+            border-color: white;
+        }
+        .swatch-negro { background-color: #1A1A1A; }
+        .swatch-gris { background-color: #666666; }
+
         input[type=range]::-webkit-slider-thumb {
             -webkit-appearance: none;
             height: 20px;
@@ -98,7 +121,7 @@
     <!-- Navegación -->
     <nav class="fixed top-0 w-full z-[100] glass-panel px-4 md:px-12 py-4 md:py-5 flex justify-between items-center border-b border-white/5">
         <div class="header-font font-black text-lg md:text-xl flex items-center gap-3 cursor-pointer" onclick="window.scrollTo({top: 0, behavior: 'smooth'})">
-            <span class="w-2 h-2 bg-white rounded-full"></span>
+            <span class="w-2 h-2 bg-white rounded-full animate-pulse"></span>
             RESILIENT<span class="opacity-20">®</span>
         </div>
         
@@ -109,7 +132,7 @@
             <a href="#view-terminal" class="nav-link">Pagar</a>
         </div>
 
-        <div class="text-[8px] md:text-[9px] opacity-40 uppercase font-mono">System: Active_</div>
+        <div class="text-[8px] md:text-[9px] opacity-40 uppercase font-mono tracking-widest">System: Active_v2.0</div>
     </nav>
 
     <!-- SECCIÓN 01: HOME -->
@@ -138,12 +161,11 @@
             <div class="flex flex-col md:flex-row justify-between items-center md:items-baseline mb-12 md:mb-16 gap-6">
                 <h2 class="header-font text-4xl md:text-5xl font-black uppercase italic reveal">CATALOGO </h2>
                 <div id="typeSelector" class="flex gap-4 md:gap-6 reveal">
-                    <span class="text-[10px] border-b-2 border-white pb-1">TODOS LOS PERSONAJES</span>
+                    <span class="text-[10px] border-b-2 border-white pb-1 tracking-widest">TODOS LOS PERSONAJES</span>
                 </div>
             </div>
             
             <div class="grid lg:grid-cols-12 gap-8 md:gap-10">
-                <!-- Selector y Datos -->
                 <div class="lg:col-span-4 order-2 lg:order-1 space-y-6 reveal">
                     <div id="entityGrid" class="grid grid-cols-2 gap-2"></div>
                     
@@ -154,10 +176,16 @@
                         <div class="mb-6">
                             <p class="text-[9px] uppercase opacity-40 mb-3 tracking-widest">TIPO DE PRENDA</p>
                             <div class="grid grid-cols-3 gap-2" id="garmentTypeSelector">
-                                <div class="garment-chip active" data-type="tshirt" onclick="selectGarment('tshirt')">T-Shirt</div>
-                                <div class="garment-chip" data-type="tank" onclick="selectGarment('tank')">Tank</div>
-                                <div class="garment-chip" data-type="hoodie" onclick="selectGarment('hoodie')">Hoodie</div>
+                                <!-- Se renderizan dinámicamente según el personaje -->
                             </div>
+                        </div>
+
+                        <div class="mb-8">
+                            <div class="flex justify-between items-center mb-4">
+                                <p class="text-[9px] uppercase opacity-40 tracking-widest">COLOR_DISPONIBLE</p>
+                                <span id="colorLabel" class="text-[9px] font-bold uppercase opacity-60">Negro</span>
+                            </div>
+                            <div id="colorSwatches" class="flex gap-6 items-center px-2 py-1"></div>
                         </div>
 
                         <div class="mb-8">
@@ -177,27 +205,22 @@
                     </div>
                 </div>
 
-                <!-- Imagen Principal con Selector de Partes/Vistas -->
                 <div class="lg:col-span-5 order-1 lg:order-2 reveal">
                     <div class="relative group">
-                        <div class="glass-panel aspect-[4/5] overflow-hidden relative">
-                            <img id="entityImage" src="https://via.placeholder.com/800x1000/111/fff?text=RESILIENT+ENTITY" class="w-full h-full object-cover">
+                        <div class="glass-panel aspect-[4/5] overflow-hidden relative border border-white/10">
+                            <img id="entityImage" src="" class="w-full h-full object-cover">
                             <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent"></div>
-                            
                             <div class="absolute bottom-4 left-4">
                                 <span id="viewLabel" class="text-[8px] bg-white text-black px-2 py-1 font-bold uppercase tracking-widest">FRONT_VIEW</span>
                             </div>
                         </div>
-
-                        <!-- SELECTOR DE VISTAS (Partes de la prenda) -->
-                        <div class="grid grid-cols-3 gap-2 mt-4" id="viewSelector">
+                        <div class="grid grid-cols-2 gap-2 mt-4" id="viewSelector">
                             <div class="view-chip active" data-view="front" onclick="selectView('front')">FRONT</div>
                             <div class="view-chip" data-view="back" onclick="selectView('back')">BACK</div>
                         </div>
                     </div>
                 </div>
 
-                <!-- Radar y Orden -->
                 <div class="lg:col-span-3 order-3 reveal">
                     <div class="h-48 md:h-64 mb-6">
                         <canvas id="entityRadar"></canvas>
@@ -222,7 +245,6 @@
                 <h2 class="header-font text-4xl md:text-6xl font-black uppercase italic">Fit_Lab</h2>
                 <p class="text-[9px] md:text-[10px] tracking-[0.3em] md:tracking-[0.5em] opacity-30 uppercase pb-2">Body Dimension Algorithm v2.1</p>
             </div>
-
             <div class="grid lg:grid-cols-2 gap-10 md:gap-20">
                 <div class="glass-panel p-6 md:p-10 space-y-10 md:space-y-12 reveal">
                     <div>
@@ -230,28 +252,25 @@
                         <input type="range" min="150" max="210" value="175" class="w-full accent-white h-1.5 bg-white/10 appearance-none rounded-lg" id="rangeHeight" oninput="calculateFit()">
                         <div class="flex justify-between mt-4 font-bold text-xl md:text-2xl italic"><span id="valHeight">175</span><span>cm</span></div>
                     </div>
-
                     <div>
                         <label class="text-[10px] uppercase font-bold tracking-widest block mb-4 md:mb-6 opacity-40 italic">02_Body_Mass (kg)</label>
                         <input type="range" min="45" max="120" value="70" class="w-full accent-white h-1.5 bg-white/10 appearance-none rounded-lg" id="rangeWeight" oninput="calculateFit()">
                         <div class="flex justify-between mt-4 font-bold text-xl md:text-2xl italic"><span id="valWeight">70</span><span>kg</span></div>
                     </div>
-
                     <div class="pt-10 border-t border-white/10 flex items-center justify-between">
                         <span class="text-[9px] md:text-[10px] uppercase font-bold opacity-30">Recommended:</span>
                         <div id="fitResult" class="header-font text-4xl md:text-6xl font-black italic animate-pulse">SIZE_M</div>
                     </div>
                 </div>
-
                 <div class="reveal overflow-x-auto">
                     <ul class="min-w-[300px] space-y-1" id="sizeTable">
-                        <li class="flex justify-between p-4 opacity-30 text-[9px] font-bold border-b border-white/5 uppercase">
+                        <li class="flex justify-between p-4 opacity-30 text-[9px] font-bold border-b border-white/5 uppercase tracking-widest">
                             <span>Talla</span><span>Ancho</span><span>Largo</span>
                         </li>
                         <li class="size-row flex justify-between p-5 md:p-6 border-b border-white/5 hover:bg-white/5 transition-colors cursor-pointer" onclick="selectSize('S')">
                             <span class="header-font italic font-bold">SIZE_S</span><span>55 CM</span><span>72 CM</span>
                         </li>
-                        <li class="size-row flex justify-between p-5 md:p-6 border-b border-white/5 hover:bg-white/5 transition-colors cursor-pointer" onclick="selectSize('M')">
+                        <li class="size-row flex justify-between p-5 md:p-6 border-b border-white/5 hover:bg-white/5 transition-colors cursor-pointer bg-white/5" onclick="selectSize('M')">
                             <span class="header-font italic font-bold">SIZE_M</span><span>57 CM</span><span>74 CM</span>
                         </li>
                         <li class="size-row flex justify-between p-5 md:p-6 border-b border-white/5 hover:bg-white/5 transition-colors cursor-pointer" onclick="selectSize('L')">
@@ -268,81 +287,103 @@
 
     <!-- PAYMENTS -->
     <section id="view-terminal" class="min-h-screen py-20 md:py-32 px-4 md:px-20 bg-white text-black">
-        <div class="max-w-4xl mx-auto">
+        <div class="max-w-4xl mx-auto text-center md:text-left">
             <h2 class="header-font text-4xl md:text-7xl font-black uppercase italic mb-12 md:mb-20 leading-none">ZONA DE PAGO</h2>
             <div class="grid md:grid-cols-2 gap-8 md:gap-10 reveal">
                 <div class="space-y-4 md:space-y-6">
-                    <div class="border-2 md:border-4 border-black p-6 md:p-8 hover:bg-black hover:text-white transition-all cursor-pointer group" onclick="copyValue('3147654816')">
+                    <div class="border-2 md:border-4 border-black p-6 md:p-8 hover:bg-black hover:text-white transition-all cursor-pointer group text-left" onclick="copyValue('3147654816')">
                         <span class="text-[9px] font-black uppercase opacity-40 mb-2 block tracking-widest">01_Nequi</span>
                         <div class="text-xl md:text-3xl font-bold header-font">314 765 4816</div>
                     </div>
-                    <div class="border-2 md:border-4 border-black p-6 md:p-8 hover:bg-black hover:text-white transition-all cursor-pointer group" onclick="copyValue('86800059269')">
+                    <div class="border-2 md:border-4 border-black p-6 md:p-8 hover:bg-black hover:text-white transition-all cursor-pointer group text-left" onclick="copyValue('86800059269')">
                         <span class="text-[9px] font-black uppercase opacity-40 mb-2 block tracking-widest">02_Bancolombia</span>
                         <div class="text-xl md:text-3xl font-bold header-font">868-000592-69</div>
                     </div>
                 </div>
                 <div class="flex flex-col justify-between border-t-2 md:border-t-0 md:border-l-4 border-black pt-8 md:pt-0 md:pl-10">
-                    <p class="text-[11px] md:text-xs font-bold uppercase leading-relaxed text-center md:text-left">Transfiere el monto de la unidad seleccionada y envía el comprobante por WhatsApp.</p>
-                    <button id="mainOrderBtn" onclick="sendOrder()" class="mt-8 md:mt-10 bg-black text-white py-6 md:py-8 px-8 md:px-10 header-font text-lg md:text-xl uppercase italic hover:scale-[1.02] transition-transform">VALIDATE_PAYMENT</button>
+                    <p class="text-[11px] md:text-xs font-bold uppercase leading-relaxed tracking-wider">Transfiere el monto de la unidad seleccionada y envía el comprobante por WhatsApp para validación inmediata.</p>
+                    <button id="mainOrderBtn" onclick="sendOrder()" class="mt-8 md:mt-10 bg-black text-white py-6 md:py-8 px-8 md:px-10 header-font text-lg md:text-xl uppercase italic hover:scale-[1.02] transition-transform active:scale-95">VALIDATE_PAYMENT</button>
                 </div>
             </div>
         </div>
     </section>
 
-    <div id="toast" class="fixed bottom-10 left-1/2 -translate-x-1/2 bg-white text-black px-8 py-4 text-[9px] md:text-[10px] font-bold uppercase tracking-[0.3em] translate-y-32 transition-transform duration-500 z-[1000] border-2 border-black whitespace-nowrap">Data_Copied_Successfully</div>
+    <div id="toast" class="fixed bottom-10 left-1/2 -translate-x-1/2 bg-white text-black px-8 py-4 text-[9px] md:text-[10px] font-bold uppercase tracking-[0.3em] translate-y-32 transition-transform duration-500 z-[1000] border-2 border-black whitespace-nowrap shadow-2xl">Data_Copied_Successfully</div>
 
     <script>
-        // DB Completa con GOKU y rutas para múltiples vistas
+        // ================================================================
+        // MAPA DE IMÁGENES MANUAL: PEGA TUS LINKS AQUÍ UNO POR UNO
+        // ================================================================
+        const IMAGE_MAP = {
+            broly: {
+                tshirt: {
+                    Negro: { front: "BROLY.TS.F.N.png", back: "BROLY.TS.B.N.png" },
+                    Gris: { front: "BROLY.TS.F.G.png", back: "BROLY.TS.B.G.png" }
+                },
+                tank: {
+                    Negro: { front: "BROLY.TK.F.N.png", back: "BROLY.TK.B.N.png" },
+                    Gris: { front: "BROLY.TK.F.G.png", back: "BROLY.TK.B.G.png" }
+                },
+                hoodie: {
+                    Negro: { front: "BROLY.HD.F.N.png", back: "BROLY.HD.B.N.png" }
+                }
+            },
+            beerus: {
+                tshirt: {
+                    Negro: { front: "BEERUS.TS.F.N.png", back: "BEERUS.TS.B.N.png" },
+                    Gris: { front: "BEERUS.TS.F.G.png", back: "BEERUS.TS.B.G.png" }
+                },
+                tank: {
+                    Negro: { front: "BEERUS.TK.F.N.png", back: "BEERUS.TK.B.N.png" },
+                    Gris: { front: "BEERUS.TK.F.G.png", back: "BEERUS.TK.B.G.png" }
+                },
+                hoodie: {
+                    Negro: { front: "BEERUS.HD.F.N.png", back: "BEERUS.HD.B.N.png" }
+                }
+            },
+            vegeta: {
+                tshirt: {
+                    Negro: { front: "VEGETA.TS.F.N.png", back: "VEGETA.TS.B.N.png" },
+                    Gris: { front: "VEGETA.TS.F.G.png", back: "VEGETA.TS.B.G.png" }
+                },
+                tank: {
+                    Negro: { front: "VEGETA.TK.F.N.png", back: "VEGETA.TK.B.N.png" },
+                    Gris: { front: "VEGETA.TK.F.G.png", back: "VEGETA.TK.B.G.png" }
+                }
+            },
+            goku: {
+                tshirt: {
+                    Negro: { front: "GOKU.TS.F.N.png", back: "GOKU.TS.B.N.png" },
+                    Gris: { front: "lGOKU.TS.F.G.png", back: "GOKU.TS.B.G.png" }
+                },
+                tank: {
+                    Negro: { front: "GOKU.TK.F.N.png", back: "GOKU.TK.B.N.png" },
+                    Gris: { front: "GOKU.TK.F.G.png", back: "GOKU.TK.B.G.png" }
+                }
+            }
+        };
+
         const DATABASE = {
             entities: {
-                broly: { 
-                    name: "BROLY", 
-                    desc: "ENTITY_01: Poder desatado. Fit masivo con construcción de hombros caídos.", 
-                    images: { 
-                        tshirt: { front: "BROLY.TS.FRONT.png", back: "BROLY.TS.BACK.png"},
-                        tank: { front: "BROLY.TK.FRONT.png", back: "BROLY.TK.BACK.png"}, 
-                        hoodie: { front: "BROLY.HD.FRONT.png", back: "BROLY.HD.BACK.png" }
-                    },
-                    stats: [98, 95, 80, 90] 
-                },
-                jiren: { 
-                    name: "BEERUS", 
-                    desc: "ENTITY_02: Fuerza absoluta. Diseño minimalista pero con densidad superior.", 
-                    images: { 
-                        tshirt: { front: "BEERUS.TS.FRONT.png", back: "BEERUS.TS.BACK.png"}, 
-                        tank: { front: "BEERUS.TK.FRONT.png", back: "BEERUS.TK.BACK.png"},
-                        hoodie: { front: "BEERUS.HD.FRONT.png", back: "BEERUS.HD.BACK.png" }
-                    },
-                    stats: [95, 98, 70, 85] 
-                },
-                vegeta: { 
-                    name: "VEGETA", 
-                    desc: "ENTITY_03: Orgullo real. Acabados técnicos y costuras reforzadas.", 
-                    images: { 
-                        tshirt: { front: "VEGETA.TS.FRONT.png", back: "VEGETA.TS.BACK.png"},
-                        tank: { front: "VEGETA.TK.FRONT.png", back: "VEGETA.TK.BACK.png"},
-                        hoodie: { front: "VEGETA.HD.FRONT.png", back: "VEGETA.HD.BACK.png" }
-                    },
-                    stats: [90, 85, 95, 95] 
-                },
-                goku: { 
-                    name: "GOKU", 
-                    desc: "ENTITY_04: Instinto dominado. El balance ideal entre comodidad y estilo.", 
-                    images: { 
-                        tshirt: { front: "GOKU.TS.FRONT.png", back: "GOKU.TS.BACK.png"},
-                        tank: { front: "GOKU.TK.FRONT.png", back: "GOKU.TK.BACK.png"},
-                        hoodie: { front: "GOKU.HD.FRONT.png", back: "GOKU.HD.BACK.png" }
-                    },
-                    stats: [92, 90, 90, 100] 
-                },
+                broly: { name: "BROLY", desc: "ENTITY_01: Poder desatado. Fit masivo con construcción de hombros caídos y tela de alto gramaje.", stats: [98, 95, 80, 90] },
+                beerus: { name: "BEERUS", desc: "ENTITY_02: Destrucción elegante. Diseño minimalista pero con densidad superior.", stats: [95, 98, 70, 85] },
+                vegeta: { name: "VEGETA", desc: "ENTITY_03: Orgullo real. Acabados técnicos y costuras reforzadas.", stats: [90, 85, 95, 95] },
+                goku: { name: "GOKU", desc: "ENTITY_04: Instinto dominado. El balance ideal entre flexibilidad y resistencia.", stats: [92, 90, 90, 100] },
             }
         };
 
         const PRICES = { tshirt: 75000, tank: 65000, hoodie: 120000 };
+        const COLORS = {
+            tshirt: ["Negro", "Gris"],
+            tank: ["Negro", "Gris"],
+            hoodie: ["Negro"] // Se eliminó Beige
+        };
+
         let radarChart;
         let currentEntity = 'broly';
         let currentSize = 'M';
         let currentGarment = 'tshirt';
+        let currentColor = 'Negro';
         let currentView = 'front';
 
         window.onload = () => {
@@ -359,7 +400,7 @@
             Object.keys(DATABASE.entities).forEach(key => {
                 const entity = DATABASE.entities[key];
                 const btn = document.createElement('button');
-                btn.className = "p-3 md:p-4 border border-white/10 hover:border-white uppercase text-[8px] md:text-[9px] font-bold transition-all text-center";
+                btn.className = "p-3 md:p-4 border border-white/10 hover:border-white uppercase text-[8px] md:text-[9px] font-bold transition-all text-center tracking-widest";
                 btn.id = `btn-${key}`;
                 btn.innerText = entity.name;
                 btn.onclick = () => syncEntity(key);
@@ -368,7 +409,52 @@
             updateActiveButton();
         }
 
-        // Nueva función para seleccionar la vista (FRONT, BACK, DETAIL)
+        // Nueva función para renderizar botones de tipo de prenda según disponibilidad del personaje
+        function renderGarmentSelector() {
+            const container = document.getElementById('garmentTypeSelector');
+            container.innerHTML = '';
+            
+            // Listado base de tipos
+            const types = [
+                { id: 'tshirt', label: 'T-Shirt' },
+                { id: 'tank', label: 'Tank' },
+                { id: 'hoodie', label: 'Hoodie' }
+            ];
+
+            types.forEach(t => {
+                // Verificar si el personaje tiene este tipo de prenda en IMAGE_MAP
+                if (IMAGE_MAP[currentEntity][t.id]) {
+                    const btn = document.createElement('div');
+                    btn.className = `garment-chip ${currentGarment === t.id ? 'active' : ''}`;
+                    btn.innerText = t.label;
+                    btn.onclick = () => selectGarment(t.id);
+                    container.appendChild(btn);
+                }
+            });
+        }
+
+        function renderColorSwatches() {
+            const container = document.getElementById('colorSwatches');
+            container.innerHTML = '';
+            const availableColors = COLORS[currentGarment];
+            
+            availableColors.forEach(c => {
+                const swatch = document.createElement('div');
+                const colorKey = c.toLowerCase();
+                swatch.className = `color-swatch swatch-${colorKey} ${currentColor === c ? 'active' : ''}`;
+                swatch.title = c;
+                swatch.onclick = () => selectColor(c);
+                container.appendChild(swatch);
+            });
+        }
+
+        function selectColor(color) {
+            currentColor = color;
+            document.getElementById('colorLabel').innerText = color;
+            renderColorSwatches();
+            updateEntityVisuals();
+        }
+
         function selectView(view) {
             currentView = view;
             document.querySelectorAll('.view-chip').forEach(c => {
@@ -380,9 +466,13 @@
 
         function selectGarment(type) {
             currentGarment = type;
-            document.querySelectorAll('.garment-chip').forEach(c => {
-                c.classList.toggle('active', c.getAttribute('data-type') === type);
-            });
+            // Validar color si el nuevo tipo no tiene el color actual (ej. Gris no existe en Hoodie)
+            if (!COLORS[type].includes(currentColor)) {
+                currentColor = COLORS[type][0];
+                document.getElementById('colorLabel').innerText = currentColor;
+            }
+            renderGarmentSelector();
+            renderColorSwatches();
             updateEntityVisuals();
             updatePrice();
         }
@@ -392,8 +482,16 @@
             const data = DATABASE.entities[key];
             document.getElementById('entityName').innerText = data.name;
             document.getElementById('entityDesc').innerText = data.desc;
+            
+            // Si el personaje actual no tiene la prenda seleccionada (ej. Hoodie), volver a T-Shirt
+            if (!IMAGE_MAP[currentEntity][currentGarment]) {
+                currentGarment = 'tshirt';
+            }
+
+            renderGarmentSelector();
             updateEntityVisuals();
             updateActiveButton();
+            renderColorSwatches();
             if(radarChart) {
                 radarChart.data.datasets[0].data = data.stats;
                 radarChart.update();
@@ -403,18 +501,22 @@
 
         function updateEntityVisuals() {
             const imgElement = document.getElementById('entityImage');
-            const data = DATABASE.entities[currentEntity];
-            // Ahora busca la imagen según Prenda y Vista actual
-            const newSrc = data.images[currentGarment][currentView];
+            
+            // Acceso al mapa de imágenes
+            const characterData = IMAGE_MAP[currentEntity][currentGarment];
+            const colorData = characterData ? characterData[currentColor] : null;
+            const manualSrc = colorData ? colorData[currentView] : null;
             
             imgElement.style.opacity = "0";
             imgElement.style.transform = "scale(1.05)";
             
             setTimeout(() => {
-                imgElement.src = newSrc;
-                imgElement.onerror = () => {
-                    imgElement.src = `https://via.placeholder.com/800x1000/111/fff?text=${data.name}+${currentGarment}+${currentView}`;
-                };
+                if (manualSrc && manualSrc !== "link_aqui.png") {
+                    imgElement.src = manualSrc;
+                } else {
+                    imgElement.src = `https://via.placeholder.com/800x1000/111/fff?text=${currentEntity.toUpperCase()}+${currentGarment.toUpperCase()}`;
+                }
+                
                 imgElement.style.opacity = "1";
                 imgElement.style.transform = "scale(1)";
             }, 150);
@@ -477,12 +579,10 @@
             const w = parseInt(document.getElementById('rangeWeight').value);
             document.getElementById('valHeight').innerText = h;
             document.getElementById('valWeight').innerText = w;
-            
             let res = "SIZE_S";
             if (h > 185 || w > 85) res = "SIZE_XL";
             else if (h > 175 || w > 75) res = "SIZE_L";
             else if (h > 165 || w > 65) res = "SIZE_M";
-            
             document.getElementById('fitResult').innerText = res;
             selectSize(res.split('_')[1]);
         }
@@ -499,7 +599,7 @@
         function sendOrder() {
             const entity = DATABASE.entities[currentEntity];
             const price = PRICES[currentGarment];
-            const text = encodeURIComponent(`[RESILIENT_STREAM]: Hola, quiero validar mi pedido.\nUnidad: ${entity.name}\nPrenda: ${currentGarment.toUpperCase()}\nTalla: ${currentSize}\nPrecio: $${price.toLocaleString('es-CO')}`);
+            const text = encodeURIComponent(`[RESILIENT_STREAM]: Hola, quiero validar mi pedido.\nUnidad: ${entity.name}\nPrenda: ${currentGarment.toUpperCase()}\nColor: ${currentColor.toUpperCase()}\nTalla: ${currentSize}\nPrecio: $${price.toLocaleString('es-CO')}`);
             window.open(`https://wa.me/573147654816?text=${text}`, '_blank');
         }
 
@@ -527,4 +627,3 @@
     </script>
 </body>
 </html>
-
