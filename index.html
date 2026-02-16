@@ -337,56 +337,26 @@
     <div id="toast" class="fixed bottom-10 left-1/2 -translate-x-1/2 bg-black text-white px-8 py-4 text-[10px] font-bold uppercase tracking-[0.2em] translate-y-32 transition-transform duration-500 z-[1000] border border-white/20 shadow-2xl">Copiado al portapapeles</div>
 
     <script>
-        const IMAGE_MAP = {
+         const IMAGE_MAP = {
             broly: {
-                tshirt: {
-                    Negro: { front: "BROLY.TS.F.N.png", back: "BROLY.TS.B.N.png" },
-                    Gris: { front: "BROLY.TS.F.G.png", back: "BROLY.TS.B.G.png" }
-                },
-                tank: {
-                    Negro: { front: "BROLY.TK.F.N.png", back: "BROLY.TK.B.N.png" },
-                    Gris: { front: "BROLY.TK.F.G.png", back: "BROLY.TK.B.G.png" }
-                },
-                hoodie: {
-                    Negro: { front: "BROLY.HD.F.N.png", back: "BROLY.HD.B.N.png" }
-                }
+                tshirt: { Negro: { front: "BROLY.TS.F.N.png", back: "BROLY.TS.B.N.png" }, Gris: { front: "BROLY.TS.F.G.png", back: "BROLY.TS.B.G.png" } },
+                tank: { Negro: { front: "BROLY.TK.F.N.png", back: "BROLY.TK.B.N.png" }, Gris: { front: "BROLY.TK.F.G.png", back: "BROLY.TK.B.G.png" } },
+                hoodie: { Negro: { front: "BROLY.HD.F.N.png", back: "BROLY.HD.B.N.png" } }
             },
             beerus: {
-                tshirt: {
-                    Negro: { front: "BEERUS.TS.F.N.png", back: "BEERUS.TS.B.N.png" },
-                    Gris: { front: "BEERUS.TS.F.G.png", back: "BEERUS.TS.B.G.png" }
-                },
-                tank: {
-                    Negro: { front: "BEERUS.TK.F.N.png", back: "BEERUS.TK.B.N.png" },
-                    Gris: { front: "BEERUS.TK.F.G.png", back: "BEERUS.TK.B.G.png" }
-                },
-                hoodie: {
-                    Negro: { front: "BEERUS.HD.F.N.png", back: "BEERUS.HD.B.N.png" }
-                }
+                tshirt: { Negro: { front: "BEERUS.TS.F.N.png", back: "BEERUS.TS.B.N.png" }, Gris: { front: "BEERUS.TS.F.G.png", back: "BEERUS.TS.B.G.png" } },
+                tank: { Negro: { front: "BEERUS.TK.F.N.png", back: "BEERUS.TK.B.N.png" }, Gris: { front: "BEERUS.TK.F.G.png", back: "BEERUS.TK.B.G.png" } },
+                hoodie: { Negro: { front: "BEERUS.HD.F.N.png", back: "BEERUS.HD.B.N.png" } }
             },
             vegeta: {
-                tshirt: {
-                    Negro: { front: "VEGETA.TS.F.N.png", back: "VEGETA.TS.B.N.png" },
-                    Gris: { front: "VEGETA.TS.F.G.png", back: "VEGETA.TS.B.G.png" }
-                },
-                tank: {
-                    Negro: { front: "VEGETA.TK.F.N.png", back: "VEGETA.TK.B.N.png" },
-                    Gris: { front: "VEGETA.TK.F.G.png", back: "VEGETA.TK.B.G.png" }
-                }
+                tshirt: { Negro: { front: "VEGETA.TS.F.N.png", back: "VEGETA.TS.B.N.png" }, Gris: { front: "VEGETA.TS.F.G.png", back: "VEGETA.TS.B.G.png" } },
+                tank: { Negro: { front: "VEGETA.TK.F.N.png", back: "VEGETA.TK.B.N.png" }, Gris: { front: "VEGETA.TK.F.G.png", back: "VEGETA.TK.B.G.png" } }
             },
             goku: {
-                tshirt: {
-                    Negro: { front: "GOKU.TS.F.N.png", back: "GOKU.TS.B.N.png" },
-                    Gris: { front: "GOKU.TS.F.G.png", back: "GOKU.TS.B.G.png" }
-                },
-                tank: {
-                    Negro: { front: "GOKU.TK.F.N.png", back: "GOKU.TK.B.N.png" },
-                    Gris: { front: "GOKU.TK.F.G.png", back: "GOKU.TK.B.G.png" }
-                }
+                tshirt: { Negro: { front: "GOKU.TS.F.N.png", back: "GOKU.TS.B.N.png" }, Gris: { front: "GOKU.TS.F.G.png", back: "GOKU.TS.B.G.png" } },
+                tank: { Negro: { front: "GOKU.TK.F.N.png", back: "GOKU.TK.B.N.png" }, Gris: { front: "GOKU.TK.F.G.png", back: "GOKU.TK.B.G.png" } }
             }
         };
-
-
         const DATABASE = {
             entities: {
                 broly: { name: "BROLY", desc: "ENTITY_01: Poder desatado. Fit masivo con construcción de hombros caídos y tela de alto gramaje.", stats: [98, 95, 80, 90] },
@@ -626,6 +596,7 @@
     </script>
 </body>
 </html>
+
 
 
 
