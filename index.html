@@ -51,7 +51,7 @@
         .nav-link { position: relative; transition: opacity 0.3s; opacity: 0.5; }
         .nav-link.active { opacity: 1; color: #fff; font-weight: bold; }
         
-        /* Chips táctiles: más grandes para dedos */
+        /* Chips táctiles */
         .size-chip, .garment-chip, .view-chip {
             padding: 12px 14px;
             border: 1px solid rgba(255,255,255,0.1);
@@ -72,7 +72,6 @@
             font-weight: bold;
         }
 
-        /* Sistema de colores corregido */
         .color-swatch {
             width: 32px;
             height: 32px;
@@ -91,7 +90,6 @@
         .swatch-negro { background-color: #1a1a1a; }
         .swatch-gris { background-color: #555555; }
 
-        /* Ajustes de scrollbar y range para móvil */
         input[type=range] { height: 40px; background: transparent; }
         input[type=range]::-webkit-slider-thumb {
             -webkit-appearance: none;
@@ -104,7 +102,7 @@
         #zoomContainer {
             overflow: hidden;
             position: relative;
-            touch-action: none; /* Previene scroll mientras se hace zoom táctil */
+            touch-action: none;
         }
         #entityImage {
             transition: opacity 0.4s ease-in-out;
@@ -128,16 +126,12 @@
 
     <div class="scan-line"></div>
 
-    <!-- Navegación con LOGOTIPO -->
+    <!-- Navegación con LOGOTIPO dinámico -->
     <nav class="fixed top-0 w-full z-[100] glass-panel px-6 py-4 flex justify-between items-center border-b border-white/5">
         <div class="flex items-center gap-3 cursor-pointer" onclick="window.scrollTo({top: 0, behavior: 'smooth'})">
-            <!-- 
-                EXPLICACIÓN LOGO:
-                Para cambiar el logotipo, sustituye la URL en 'src' abajo. 
-                El estilo 'h-6 md:h-8' controla el tamaño en móvil y escritorio.
-            -->
-            <img src="LGRT" alt="RESILIENT LOGO" class="h-6 md:h-8 w-auto object-contain" onerror="this.style.display='none'; this.nextElementSibling.style.display='block'">
-            <div class="header-font font-black text-lg md:text-xl hidden" style="display: none;">RESILIENT</div>
+            <!-- El logo se carga mediante JavaScript desde la configuración abajo -->
+            <img id="mainLogo" src="" alt="RESILIENT" class="h-6 md:h-8 w-auto object-contain hidden">
+            <div id="fallbackLogoText" class="header-font font-black text-lg md:text-xl">RESILIENT</div>
             <span class="w-1.5 h-1.5 bg-white rounded-full animate-pulse"></span>
         </div>
         
@@ -156,6 +150,7 @@
         </div>
     </nav>
 
+    <!-- El resto del HTML se mantiene igual para no romper la estructura -->
     <!-- CARRITO -->
     <div id="cartOverlay" class="fixed inset-0 bg-black/90 z-[200] opacity-0 pointer-events-none transition-opacity duration-300" onclick="toggleCart()"></div>
     <aside id="cartDrawer" class="fixed top-0 right-0 h-full bg-zinc-950 z-[201] border-l border-white/10 flex flex-col shadow-2xl">
@@ -175,7 +170,6 @@
         </div>
     </aside>
 
-    <!-- SECCIÓN 01: HOME -->
     <section id="view-home" class="min-h-[90vh] md:min-h-screen flex items-center px-6 md:px-20 relative overflow-hidden">
         <div class="max-w-7xl mx-auto w-full pt-20">
             <div class="mb-4 text-[8px] md:text-[10px] uppercase tracking-[0.5em] opacity-30 text-center md:text-left">Evolutionary Cloth Engineering</div>
@@ -190,15 +184,12 @@
         </div>
     </section>
 
-    <!-- SECCIÓN 02: CATALOGO -->
     <section id="view-collection" class="min-h-screen py-16 md:py-32 px-4 md:px-20 border-t border-white/5">
         <div class="max-w-7xl mx-auto">
             <div class="mb-12 text-center md:text-left">
                 <h2 class="header-font text-3xl md:text-5xl font-black uppercase italic reveal">CATALOGO</h2>
             </div>
-            
             <div class="grid lg:grid-cols-12 gap-8 md:gap-12">
-                <!-- Visualizador de Imagen (Prioridad en móvil arriba) -->
                 <div class="lg:col-span-6 order-1 lg:order-2 reveal">
                     <div class="relative">
                         <div id="zoomContainer" class="glass-panel aspect-[4/5] overflow-hidden relative border border-white/10 rounded-sm">
@@ -214,15 +205,11 @@
                         </div>
                     </div>
                 </div>
-
-                <!-- Información y Selectores -->
                 <div class="lg:col-span-6 order-2 lg:order-1 space-y-8 reveal">
                     <div id="entityGrid" class="grid grid-cols-2 sm:grid-cols-4 gap-2"></div>
-                    
                     <div class="glass-panel p-6 md:p-10 border-l-4 border-white shadow-xl">
                         <h3 id="entityName" class="header-font text-3xl md:text-4xl font-bold uppercase italic mb-2 tracking-tighter">---</h3>
                         <p id="entityDesc" class="text-[10px] md:text-[11px] leading-relaxed uppercase opacity-60 mb-8">Cargando...</p>
-                        
                         <div class="grid md:grid-cols-2 gap-8">
                             <div>
                                 <p class="text-[9px] uppercase opacity-40 mb-4 tracking-widest italic">01_PRENDA</p>
@@ -233,7 +220,6 @@
                                 <div id="colorSwatches" class="flex gap-6 items-center py-2 h-12"></div>
                             </div>
                         </div>
-
                         <div class="mt-8">
                             <p class="text-[9px] uppercase opacity-40 mb-4 tracking-widest italic">03_TALLA_SELECTOR</p>
                             <div class="grid grid-cols-4 gap-2" id="catalogSizeSelector">
@@ -243,7 +229,6 @@
                                 <div class="size-chip" onclick="selectSize('XL')">XL</div>
                             </div>
                         </div>
-
                         <div class="flex justify-between items-center pt-8 mt-8 border-t border-white/5">
                             <span id="entityPrice" class="header-font text-2xl md:text-3xl font-bold">$00.000</span>
                             <button onclick="addToCart()" class="bg-white text-black font-black px-8 py-5 text-[10px] uppercase tracking-widest active:scale-90 transition-all shadow-lg">
@@ -251,8 +236,6 @@
                             </button>
                         </div>
                     </div>
-
-                    <!-- Radar stats -->
                     <div class="h-48 md:h-64 opacity-50 px-4">
                         <canvas id="entityRadar"></canvas>
                     </div>
@@ -261,7 +244,6 @@
         </div>
     </section>
 
-    <!-- FIT LAB -->
     <section id="view-specs" class="min-h-screen py-20 px-6 md:px-20 bg-neutral-900/20">
         <div class="max-w-6xl mx-auto">
             <h2 class="header-font text-3xl md:text-5xl font-black uppercase italic mb-12 text-center md:text-left">Fit_Lab</h2>
@@ -295,7 +277,6 @@
         </div>
     </section>
 
-    <!-- PAGOS -->
     <section id="view-terminal" class="min-h-screen py-20 px-6 md:px-20 bg-white text-black">
         <div class="max-w-4xl mx-auto text-center md:text-left">
             <h2 class="header-font text-5xl md:text-8xl font-black uppercase italic mb-16 leading-none">PAGO</h2>
@@ -318,15 +299,24 @@
         </div>
     </section>
 
-    <!-- Notificación táctil -->
     <div id="toast" class="fixed bottom-10 left-1/2 -translate-x-1/2 bg-black text-white px-8 py-5 text-[10px] font-bold uppercase tracking-[0.2em] translate-y-32 transition-transform duration-500 z-[1000] border-2 border-white/20 shadow-2xl">Dato Copiado</div>
 
     <script>
-        /* EXPLICACIÓN SISTEMA DE IMÁGENES:
-           Aquí debes ingresar los links de tus fotos una a una. 
-           Estructura: [Personaje] -> [Tipo Prenda] -> [Color] -> [Vista]
+        /* =========================================
+           1. SISTEMA DE IMAGEN DE LOGOTIPO
+           =========================================
+           Pega aquí el enlace de tu logo. 
         */
-       const IMAGE_MAP = {
+        const LOGO_SETTINGS = {
+            url: "LGRT.png" // <--- CAMBIA ESTO
+        };
+
+        /* =========================================
+           2. SISTEMA DE IMÁGENES DE PRODUCTOS
+           =========================================
+           Ingresa los links de tus fotos una a una. 
+        */
+        const IMAGE_MAP = {
             broly: {
                 tshirt: {
                     Negro: { front: "BROLY.TS.F.N.png", back: "BROLY.TS.B.N.png" },
@@ -397,6 +387,7 @@
         let radarChart;
 
         window.onload = () => {
+            initLogo(); // Inicializar el logo
             renderCatalogButtons();
             initRadar();
             syncEntity('broly');
@@ -405,11 +396,29 @@
             initTouchZoom();
         };
 
-        // Zoom táctil fluido
+        // Función para cargar el logotipo según la URL ingresada arriba
+        function initLogo() {
+            const logoImg = document.getElementById('mainLogo');
+            const logoText = document.getElementById('fallbackLogoText');
+            
+            if (LOGO_SETTINGS.url && !LOGO_SETTINGS.url.includes("TU_LINK")) {
+                logoImg.src = LOGO_SETTINGS.url;
+                logoImg.classList.remove('hidden');
+                logoText.classList.add('hidden');
+                
+                // Si el link falla, volver a texto
+                logoImg.onerror = () => {
+                    logoImg.classList.add('hidden');
+                    logoText.classList.remove('hidden');
+                };
+            }
+        }
+
+        // --- MANTENER TODA LA LÓGICA ANTERIOR SIN CAMBIOS ---
+
         function initTouchZoom() {
             const container = document.getElementById('zoomContainer');
             const img = document.getElementById('entityImage');
-            
             const handleInteract = (clientX, clientY) => {
                 const rect = container.getBoundingClientRect();
                 const x = ((clientX - rect.left) / rect.width) * 100;
@@ -417,11 +426,8 @@
                 img.style.transformOrigin = `${x}% ${y}%`;
                 img.style.transform = "scale(2.5)";
             };
-
             container.onmousemove = (e) => handleInteract(e.clientX, e.clientY);
             container.onmouseleave = () => img.style.transform = "scale(1)";
-            
-            // Soporte Táctil
             container.ontouchmove = (e) => {
                 handleInteract(e.touches[0].clientX, e.touches[0].clientY);
                 e.preventDefault(); 
@@ -462,7 +468,7 @@
                 total += item.price * item.qty;
                 count += item.qty;
                 const div = document.createElement('div');
-                div.className = "glass-panel p-4 flex gap-4 border-white/5 shadow-lg animate-fadeIn";
+                div.className = "glass-panel p-4 flex gap-4 border-white/5 shadow-lg";
                 div.innerHTML = `
                     <div class="w-14 h-14 bg-zinc-900 flex items-center justify-center text-[10px] font-bold italic border border-white/10">${item.name.slice(0,2)}</div>
                     <div class="flex-1">
@@ -552,14 +558,10 @@
         function updateEntityVisuals() {
             const img = document.getElementById('entityImage');
             img.style.opacity = "0";
-            
-            // Lógica para cargar imagen real o placeholder
             const data = IMAGE_MAP[currentEntity][currentGarment][currentColor];
             const src = data ? data[currentView] : null;
-
             setTimeout(() => {
                 if(src && src.includes('LINK_')) {
-                    // Si el link aún no ha sido cambiado por el usuario, mostramos placeholder
                     img.src = `https://via.placeholder.com/800x1000/111/fff?text=${currentEntity}+${currentGarment}+${currentColor}`;
                 } else {
                     img.src = src;
@@ -600,8 +602,7 @@
         }
 
         function copyValue(v) {
-            const el = document.createElement('textarea');
-            el.value = v; document.body.appendChild(el); el.select();
+            const el = document.createElement('textarea'); el.value = v; document.body.appendChild(el); el.select();
             document.execCommand('copy'); document.body.removeChild(el);
             const t = document.getElementById('toast');
             t.style.transform = "translate(-50%, 0)";
@@ -631,6 +632,7 @@
     </script>
 </body>
 </html>
+
 
 
 
