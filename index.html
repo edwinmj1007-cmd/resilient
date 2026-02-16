@@ -185,7 +185,7 @@
             </div>
             <div class="grid lg:grid-cols-12 gap-8 md:gap-12">
                 <div class="lg:col-span-6 order-1 lg:order-2 reveal">
-                    <div class="relative">
+                    <div class="relative" id="productMediaAnchor">
                         <div id="zoomContainer" class="glass-panel aspect-[4/5] overflow-hidden relative border border-white/10 rounded-sm">
                             <img id="entityImage" src="" class="w-full h-full object-cover">
                             <div class="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent pointer-events-none"></div>
@@ -367,7 +367,6 @@
         };
 
         const PRICES = { tshirt: 75000, tank: 65000, hoodie: 120000 };
-        // Precios originales calculados (aprox +20-25%)
         const OLD_PRICES = { tshirt: 95000, tank: 85000, hoodie: 155000 };
         const COLORS = { tshirt: ["Negro", "Gris"], tank: ["Negro", "Gris"], hoodie: ["Negro"] };
 
@@ -383,11 +382,30 @@
             initLogo();
             renderCatalogButtons();
             initRadar();
-            syncEntity('broly');
+            syncEntity('broly', false); // No scrollear al cargar por primera vez
             setupScrollSpy();
             revealOnScroll();
             initTouchZoom();
         };
+
+        // Función de utilidad para detectar si es móvil y scrollear a la imagen
+        function scrollToImageIfMobile() {
+            if (window.innerWidth < 1024) { // Umbral de Tailwind para lg
+                const anchor = document.getElementById('productMediaAnchor');
+                if (anchor) {
+                    const offset = 100; // Margen para que el header no tape la imagen
+                    const bodyRect = document.body.getBoundingClientRect().top;
+                    const elementRect = anchor.getBoundingClientRect().top;
+                    const elementPosition = elementRect - bodyRect;
+                    const offsetPosition = elementPosition - offset;
+
+                    window.scrollTo({
+                        top: offsetPosition,
+                        behavior: 'smooth'
+                    });
+                }
+            }
+        }
 
         function initLogo() {
             const logoImg = document.getElementById('mainLogo');
@@ -509,7 +527,7 @@
             });
         }
 
-        function syncEntity(key) {
+        function syncEntity(key, shouldScroll = true) {
             currentEntity = key;
             const data = DATABASE.entities[key];
             document.getElementById('entityName').innerText = data.name;
@@ -520,6 +538,7 @@
             updateActiveButton();
             if(radarChart) { radarChart.data.datasets[0].data = data.stats; radarChart.update(); }
             updatePrice();
+            if(shouldScroll) scrollToImageIfMobile();
         }
 
         function renderGarmentSelector() {
@@ -534,6 +553,7 @@
                         currentGarment = t; 
                         if (!COLORS[t].includes(currentColor)) currentColor = COLORS[t][0];
                         renderGarmentSelector(); renderColorSwatches(); updateEntityVisuals(); updatePrice(); 
+                        scrollToImageIfMobile();
                     };
                     container.appendChild(chip);
                 }
@@ -546,7 +566,12 @@
             COLORS[currentGarment].forEach(c => {
                 const swatch = document.createElement('div');
                 swatch.className = `color-swatch swatch-${c.toLowerCase()} ${currentColor === c ? 'active' : ''}`;
-                swatch.onclick = () => { currentColor = c; renderColorSwatches(); updateEntityVisuals(); };
+                swatch.onclick = () => { 
+                    currentColor = c; 
+                    renderColorSwatches(); 
+                    updateEntityVisuals(); 
+                    scrollToImageIfMobile();
+                };
                 container.appendChild(swatch);
             });
         }
@@ -582,6 +607,7 @@
         function selectSize(s) {
             currentSize = s;
             document.querySelectorAll('.size-chip').forEach(c => c.classList.toggle('active', c.innerText === s));
+            scrollToImageIfMobile();
         }
 
         function updatePrice() { 
