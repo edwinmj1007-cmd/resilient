@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Resilient® | OS v1.0</title>
+    <title>Resilient™ | OS v2.0 - Stream</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400&family=Syncopate:wght@400;700&display=swap" rel="stylesheet">
@@ -108,9 +108,23 @@
             box-shadow: 0 0 10px rgba(255,255,255,0.5);
         }
 
+        /* Estilos para el efecto Zoom */
+        #zoomContainer {
+            overflow: hidden;
+            cursor: zoom-in;
+            position: relative;
+        }
         #entityImage {
-            transition: opacity 0.4s ease-in-out, transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+            transition: opacity 0.4s ease-in-out, transform 0.1s ease-out;
             background: #111; 
+            transform-origin: center center;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        #zoomContainer:active #entityImage,
+        #zoomContainer:hover #entityImage {
+            transform: scale(2); /* Factor de zoom */
         }
     </style>
 </head>
@@ -132,7 +146,7 @@
             <a href="#view-terminal" class="nav-link">Pagar</a>
         </div>
 
-        <div class="text-[8px] md:text-[9px] opacity-40 uppercase font-mono tracking-widest">Drop_DBZ</div>
+        <div class="text-[8px] md:text-[9px] opacity-40 uppercase font-mono tracking-widest">System: Active_v2.0</div>
     </nav>
 
     <!-- SECCIÓN 01: HOME -->
@@ -207,10 +221,11 @@
 
                 <div class="lg:col-span-5 order-1 lg:order-2 reveal">
                     <div class="relative group">
-                        <div class="glass-panel aspect-[4/5] overflow-hidden relative border border-white/10">
+                        <!-- Contenedor con Zoom -->
+                        <div id="zoomContainer" class="glass-panel aspect-[4/5] overflow-hidden relative border border-white/10" onmousemove="handleZoom(event)" onmouseleave="resetZoom()">
                             <img id="entityImage" src="" class="w-full h-full object-cover">
-                            <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent"></div>
-                            <div class="absolute bottom-4 left-4">
+                            <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent pointer-events-none"></div>
+                            <div class="absolute bottom-4 left-4 pointer-events-none">
                                 <span id="viewLabel" class="text-[8px] bg-white text-black px-2 py-1 font-bold uppercase tracking-widest">FRONT_VIEW</span>
                             </div>
                         </div>
@@ -311,9 +326,6 @@
     <div id="toast" class="fixed bottom-10 left-1/2 -translate-x-1/2 bg-white text-black px-8 py-4 text-[9px] md:text-[10px] font-bold uppercase tracking-[0.3em] translate-y-32 transition-transform duration-500 z-[1000] border-2 border-black whitespace-nowrap shadow-2xl">Data_Copied_Successfully</div>
 
     <script>
-        // ================================================================
-        // MAPA DE IMÁGENES MANUAL: PEGA TUS LINKS AQUÍ UNO POR UNO
-        // ================================================================
         const IMAGE_MAP = {
             broly: {
                 tshirt: {
@@ -376,7 +388,7 @@
         const COLORS = {
             tshirt: ["Negro", "Gris"],
             tank: ["Negro", "Gris"],
-            hoodie: ["Negro"] // Se eliminó Beige
+            hoodie: ["Negro"]
         };
 
         let radarChart;
@@ -394,6 +406,29 @@
             revealOnScroll();
         };
 
+        // Función para manejar el Zoom
+        function handleZoom(e) {
+            const container = e.currentTarget;
+            const img = document.getElementById('entityImage');
+            
+            // Obtener coordenadas relativas al contenedor
+            const rect = container.getBoundingClientRect();
+            const x = e.clientX - rect.left;
+            const y = e.clientY - rect.top;
+            
+            // Calcular porcentaje de posición
+            const xPercent = (x / rect.width) * 100;
+            const yPercent = (y / rect.height) * 100;
+            
+            // Mover el origen de transformación según el cursor
+            img.style.transformOrigin = `${xPercent}% ${yPercent}%`;
+        }
+
+        function resetZoom() {
+            const img = document.getElementById('entityImage');
+            img.style.transformOrigin = "center center";
+        }
+
         function renderCatalogButtons() {
             const container = document.getElementById('entityGrid');
             container.innerHTML = ''; 
@@ -409,20 +444,11 @@
             updateActiveButton();
         }
 
-        // Nueva función para renderizar botones de tipo de prenda según disponibilidad del personaje
         function renderGarmentSelector() {
             const container = document.getElementById('garmentTypeSelector');
             container.innerHTML = '';
-            
-            // Listado base de tipos
-            const types = [
-                { id: 'tshirt', label: 'T-Shirt' },
-                { id: 'tank', label: 'Tank' },
-                { id: 'hoodie', label: 'Hoodie' }
-            ];
-
+            const types = [{ id: 'tshirt', label: 'T-Shirt' }, { id: 'tank', label: 'Tank' }, { id: 'hoodie', label: 'Hoodie' }];
             types.forEach(t => {
-                // Verificar si el personaje tiene este tipo de prenda en IMAGE_MAP
                 if (IMAGE_MAP[currentEntity][t.id]) {
                     const btn = document.createElement('div');
                     btn.className = `garment-chip ${currentGarment === t.id ? 'active' : ''}`;
@@ -437,7 +463,6 @@
             const container = document.getElementById('colorSwatches');
             container.innerHTML = '';
             const availableColors = COLORS[currentGarment];
-            
             availableColors.forEach(c => {
                 const swatch = document.createElement('div');
                 const colorKey = c.toLowerCase();
@@ -457,16 +482,13 @@
 
         function selectView(view) {
             currentView = view;
-            document.querySelectorAll('.view-chip').forEach(c => {
-                c.classList.toggle('active', c.getAttribute('data-view') === view);
-            });
+            document.querySelectorAll('.view-chip').forEach(c => c.classList.toggle('active', c.getAttribute('data-view') === view));
             document.getElementById('viewLabel').innerText = `${view.toUpperCase()}_VIEW`;
             updateEntityVisuals();
         }
 
         function selectGarment(type) {
             currentGarment = type;
-            // Validar color si el nuevo tipo no tiene el color actual (ej. Gris no existe en Hoodie)
             if (!COLORS[type].includes(currentColor)) {
                 currentColor = COLORS[type][0];
                 document.getElementById('colorLabel').innerText = currentColor;
@@ -482,12 +504,7 @@
             const data = DATABASE.entities[key];
             document.getElementById('entityName').innerText = data.name;
             document.getElementById('entityDesc').innerText = data.desc;
-            
-            // Si el personaje actual no tiene la prenda seleccionada (ej. Hoodie), volver a T-Shirt
-            if (!IMAGE_MAP[currentEntity][currentGarment]) {
-                currentGarment = 'tshirt';
-            }
-
+            if (!IMAGE_MAP[currentEntity][currentGarment]) currentGarment = 'tshirt';
             renderGarmentSelector();
             updateEntityVisuals();
             updateActiveButton();
@@ -501,24 +518,14 @@
 
         function updateEntityVisuals() {
             const imgElement = document.getElementById('entityImage');
-            
-            // Acceso al mapa de imágenes
             const characterData = IMAGE_MAP[currentEntity][currentGarment];
             const colorData = characterData ? characterData[currentColor] : null;
             const manualSrc = colorData ? colorData[currentView] : null;
-            
             imgElement.style.opacity = "0";
-            imgElement.style.transform = "scale(1.05)";
-            
             setTimeout(() => {
-                if (manualSrc && manualSrc !== "link_aqui.png") {
-                    imgElement.src = manualSrc;
-                } else {
-                    imgElement.src = `https://via.placeholder.com/800x1000/111/fff?text=${currentEntity.toUpperCase()}+${currentGarment.toUpperCase()}`;
-                }
-                
+                if (manualSrc && manualSrc !== "link_aqui.png") imgElement.src = manualSrc;
+                else imgElement.src = `https://via.placeholder.com/800x1000/111/fff?text=${currentEntity.toUpperCase()}+${currentGarment.toUpperCase()}`;
                 imgElement.style.opacity = "1";
-                imgElement.style.transform = "scale(1)";
             }, 150);
         }
 
@@ -530,9 +537,7 @@
 
         function selectSize(size) {
             currentSize = size;
-            document.querySelectorAll('#catalogSizeSelector .size-chip').forEach(c => {
-                c.classList.toggle('active', c.innerText === size);
-            });
+            document.querySelectorAll('#catalogSizeSelector .size-chip').forEach(c => c.classList.toggle('active', c.innerText === size));
             document.querySelectorAll('.size-row').forEach(row => {
                if(row.innerText.includes(`SIZE_${size}`)) row.classList.add('bg-white/10');
                else row.classList.remove('bg-white/10');
@@ -608,9 +613,7 @@
             const navLinks = document.querySelectorAll('.nav-link');
             window.addEventListener('scroll', () => {
                 let current = "";
-                sections.forEach(section => {
-                    if (window.pageYOffset >= section.offsetTop - 150) current = section.getAttribute('id');
-                });
+                sections.forEach(section => { if (window.pageYOffset >= section.offsetTop - 150) current = section.getAttribute('id'); });
                 navLinks.forEach(link => {
                     link.classList.remove('active');
                     if (link.getAttribute('href').includes(current)) link.classList.add('active');
