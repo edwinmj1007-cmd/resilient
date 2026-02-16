@@ -223,8 +223,11 @@
                                 <div class="size-chip" onclick="selectSize('XL')">XL</div>
                             </div>
                         </div>
-                        <div class="flex justify-between items-center pt-8 mt-8 border-t border-white/5">
-                            <span id="entityPrice" class="header-font text-2xl md:text-3xl font-bold">$00.000</span>
+                        <div class="flex flex-col sm:flex-row justify-between sm:items-center pt-8 mt-8 border-t border-white/5 gap-6">
+                            <div class="flex flex-col">
+                                <span id="entityOldPrice" class="text-[11px] opacity-30 line-through tracking-widest mb-1">$00.000</span>
+                                <span id="entityPrice" class="header-font text-2xl md:text-3xl font-bold text-white">$00.000</span>
+                            </div>
                             <button onclick="addToCart()" class="bg-white text-black font-black px-8 py-5 text-[10px] uppercase tracking-widest active:scale-90 transition-all shadow-lg">
                                 AGREGAR+
                             </button>
@@ -354,7 +357,6 @@
             }
         };
 
-
         const DATABASE = {
             entities: {
                 broly: { name: "BROLY", desc: "ENTITY_01: Poder desatado. Fit masivo con construcción de hombros caídos y tela de alto gramaje.", stats: [98, 95, 80, 90] },
@@ -365,6 +367,8 @@
         };
 
         const PRICES = { tshirt: 75000, tank: 65000, hoodie: 120000 };
+        // Precios originales calculados (aprox +20-25%)
+        const OLD_PRICES = { tshirt: 95000, tank: 85000, hoodie: 155000 };
         const COLORS = { tshirt: ["Negro", "Gris"], tank: ["Negro", "Gris"], hoodie: ["Negro"] };
 
         let currentEntity = 'broly';
@@ -474,22 +478,18 @@
             if(item) { item.qty += delta; if(item.qty <= 0) removeFromCart(id); else updateCartUI(); }
         }
 
-        /* CORRECCIÓN: Función de Checkout robusta */
         function goToCheckout() { 
             if(cart.length > 0) { 
-                // 1. Cerrar el menú del carrito inmediatamente
                 const drawer = document.getElementById('cartDrawer');
                 const overlay = document.getElementById('cartOverlay');
                 drawer.classList.remove('open');
                 overlay.style.opacity = '0';
                 overlay.style.pointerEvents = 'none';
 
-                // 2. Pequeño delay para dejar que la animación de cierre inicie y luego scroll
                 setTimeout(() => {
                     const terminal = document.getElementById('view-terminal');
                     if(terminal) {
                         terminal.scrollIntoView({ behavior: 'smooth' });
-                        // Forzar el hash en la URL para que el ScrollSpy sepa donde estamos
                         history.pushState(null, null, '#view-terminal');
                     }
                 }, 300);
@@ -584,7 +584,12 @@
             document.querySelectorAll('.size-chip').forEach(c => c.classList.toggle('active', c.innerText === s));
         }
 
-        function updatePrice() { document.getElementById('entityPrice').innerText = `$${PRICES[currentGarment].toLocaleString('es-CO')}`; }
+        function updatePrice() { 
+            const price = PRICES[currentGarment];
+            const oldPrice = OLD_PRICES[currentGarment];
+            document.getElementById('entityPrice').innerText = `$${price.toLocaleString('es-CO')}`; 
+            document.getElementById('entityOldPrice').innerText = `$${oldPrice.toLocaleString('es-CO')}`;
+        }
 
         function calculateFit() {
             const h = document.getElementById('rangeHeight').value;
@@ -635,11 +640,3 @@
     </script>
 </body>
 </html>
-
-
-
-
-
-
-
-
