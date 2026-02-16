@@ -104,9 +104,9 @@
         
         <div class="hidden lg:flex gap-8 text-[10px] font-bold uppercase tracking-[0.4em]">
             <a href="#view-home" class="nav-link active">Home</a>
-            <a href="#view-collection" class="nav-link">Catalog</a>
+            <a href="#view-collection" class="nav-link">Catalogo</a>
             <a href="#view-specs" class="nav-link">Fit_Lab</a>
-            <a href="#view-terminal" class="nav-link">Pay</a>
+            <a href="#view-terminal" class="nav-link">Pagar</a>
         </div>
 
         <div class="text-[8px] md:text-[9px] opacity-40 uppercase font-mono">System: Active_</div>
@@ -136,9 +136,9 @@
     <section id="view-collection" class="min-h-screen py-20 md:py-32 px-4 md:px-20 border-t border-white/5">
         <div class="max-w-7xl mx-auto">
             <div class="flex flex-col md:flex-row justify-between items-center md:items-baseline mb-12 md:mb-16 gap-6">
-                <h2 class="header-font text-4xl md:text-5xl font-black uppercase italic reveal">ENTITY_CATALOG</h2>
+                <h2 class="header-font text-4xl md:text-5xl font-black uppercase italic reveal">CATALOGO </h2>
                 <div id="typeSelector" class="flex gap-4 md:gap-6 reveal">
-                    <span class="text-[10px] border-b-2 border-white pb-1">ALL_ENTITIES</span>
+                    <span class="text-[10px] border-b-2 border-white pb-1">TODOS LOS PERSONAJES</span>
                 </div>
             </div>
             
@@ -152,7 +152,7 @@
                         <p id="entityDesc" class="text-[10px] md:text-[11px] leading-relaxed uppercase opacity-70 mb-8">Cargando...</p>
                         
                         <div class="mb-6">
-                            <p class="text-[9px] uppercase opacity-40 mb-3 tracking-widest">Garment_Type_</p>
+                            <p class="text-[9px] uppercase opacity-40 mb-3 tracking-widest">TIPO DE PRENDA</p>
                             <div class="grid grid-cols-3 gap-2" id="garmentTypeSelector">
                                 <div class="garment-chip active" data-type="tshirt" onclick="selectGarment('tshirt')">T-Shirt</div>
                                 <div class="garment-chip" data-type="tank" onclick="selectGarment('tank')">Tank</div>
@@ -193,7 +193,6 @@
                         <div class="grid grid-cols-3 gap-2 mt-4" id="viewSelector">
                             <div class="view-chip active" data-view="front" onclick="selectView('front')">FRONT</div>
                             <div class="view-chip" data-view="back" onclick="selectView('back')">BACK</div>
-                            <div class="view-chip" data-view="detail" onclick="selectView('detail')">DETAIL</div>
                         </div>
                     </div>
                 </div>
@@ -208,7 +207,7 @@
                             [!] NFC Authenticity Tag Included. Industrial Vacuum Packaging.
                         </div>
                         <a href="#view-terminal" class="block text-center bg-white text-black font-bold py-5 text-xs uppercase tracking-widest hover:invert transition-all">
-                            ORDER_NOW
+                            ORDENA_AHORA
                         </a>
                     </div>
                 </div>
@@ -270,7 +269,7 @@
     <!-- PAYMENTS -->
     <section id="view-terminal" class="min-h-screen py-20 md:py-32 px-4 md:px-20 bg-white text-black">
         <div class="max-w-4xl mx-auto">
-            <h2 class="header-font text-4xl md:text-7xl font-black uppercase italic mb-12 md:mb-20 leading-none">PAYMENT_GATEWAY</h2>
+            <h2 class="header-font text-4xl md:text-7xl font-black uppercase italic mb-12 md:mb-20 leading-none">ZONA DE PAGO</h2>
             <div class="grid md:grid-cols-2 gap-8 md:gap-10 reveal">
                 <div class="space-y-4 md:space-y-6">
                     <div class="border-2 md:border-4 border-black p-6 md:p-8 hover:bg-black hover:text-white transition-all cursor-pointer group" onclick="copyValue('3147654816')">
@@ -300,19 +299,19 @@
                     name: "BROLY", 
                     desc: "ENTITY_01: Poder desatado. Fit masivo con construcción de hombros caídos.", 
                     images: { 
-                        tshirt: { front: "BROLY.TS.FRONT.png", back: "BROLY.TS.BACK.png", detail: "BROLY.TS.DET.png" },
-                        tank: { front: "BROLY.TK.FRONT.png", back: "BROLY.TK.BACK.png", detail: "BROLY.TK.DET.png" },
-                        hoodie: { front: "BROLY.HD.FRONT.png", back: "BROLY.HD.BACK.png", detail: "BROLY.HD.DET.png" }
+                        tshirt: { front: "BROLY.TS.FRONT.png", back: "BROLY.TS.BACK.png"},
+                        tank: { front: "BROLY.TK.FRONT.png", back: "BROLY.TK.BACK.png"}, 
+                        hoodie: { front: "BROLY.HD.FRONT.png", back: "BROLY.HD.BACK.png" }
                     },
                     stats: [98, 95, 80, 90] 
                 },
                 jiren: { 
-                    name: "JIREN", 
+                    name: "BEERUS", 
                     desc: "ENTITY_02: Fuerza absoluta. Diseño minimalista pero con densidad superior.", 
                     images: { 
-                        tshirt: { front: "JIREN.TS.FRONT.png", back: "JIREN.TS.BACK.png", detail: "JIREN.TS.DET.png" },
-                        tank: { front: "JIREN.TK.FRONT.png", back: "JIREN.TK.BACK.png", detail: "JIREN.TK.DET.png" },
-                        hoodie: { front: "JIREN.HD.FRONT.png", back: "JIREN.HD.BACK.png", detail: "JIREN.HD.DET.png" }
+                        tshirt: { front: "BEERUS.TS.FRONT.png", back: "BEERUS.TS.BACK.png"}, 
+                        tank: { front: "BEERUS.TK.FRONT.png", back: "BEERUS.TK.BACK.png"},
+                        hoodie: { front: "BEERUS.HD.FRONT.png", back: "BEERUS.HD.BACK.png" }
                     },
                     stats: [95, 98, 70, 85] 
                 },
@@ -320,9 +319,9 @@
                     name: "VEGETA", 
                     desc: "ENTITY_03: Orgullo real. Acabados técnicos y costuras reforzadas.", 
                     images: { 
-                        tshirt: { front: "VEGETA.TS.FRONT.png", back: "VEGETA.TS.BACK.png", detail: "VEGETA.TS.DET.png" },
-                        tank: { front: "VEGETA.TK.FRONT.png", back: "VEGETA.TK.BACK.png", detail: "VEGETA.TK.DET.png" },
-                        hoodie: { front: "VEGETA.HD.FRONT.png", back: "VEGETA.HD.BACK.png", detail: "VEGETA.HD.DET.png" }
+                        tshirt: { front: "VEGETA.TS.FRONT.png", back: "VEGETA.TS.BACK.png"},
+                        tank: { front: "VEGETA.TK.FRONT.png", back: "VEGETA.TK.BACK.png"},
+                        hoodie: { front: "VEGETA.HD.FRONT.png", back: "VEGETA.HD.BACK.png" }
                     },
                     stats: [90, 85, 95, 95] 
                 },
@@ -330,16 +329,16 @@
                     name: "GOKU", 
                     desc: "ENTITY_04: Instinto dominado. El balance ideal entre comodidad y estilo.", 
                     images: { 
-                        tshirt: { front: "GOKU.TS.FRONT.png", back: "GOKU.TS.BACK.png", detail: "GOKU.TS.DET.png" },
-                        tank: { front: "GOKU.TK.FRONT.png", back: "GOKU.TK.BACK.png", detail: "GOKU.TK.DET.png" },
-                        hoodie: { front: "GOKU.HD.FRONT.png", back: "GOKU.HD.BACK.png", detail: "GOKU.HD.DET.png" }
+                        tshirt: { front: "GOKU.TS.FRONT.png", back: "GOKU.TS.BACK.png"},
+                        tank: { front: "GOKU.TK.FRONT.png", back: "GOKU.TK.BACK.png"},
+                        hoodie: { front: "GOKU.HD.FRONT.png", back: "GOKU.HD.BACK.png" }
                     },
                     stats: [92, 90, 90, 100] 
                 },
             }
         };
 
-        const PRICES = { tshirt: 75000, tank: 60000, hoodie: 120000 };
+        const PRICES = { tshirt: 75000, tank: 65000, hoodie: 120000 };
         let radarChart;
         let currentEntity = 'broly';
         let currentSize = 'M';
@@ -528,3 +527,4 @@
     </script>
 </body>
 </html>
+
