@@ -124,7 +124,16 @@
         }
         #zoomContainer:active #entityImage,
         #zoomContainer:hover #entityImage {
-            transform: scale(2); /* Factor de zoom */
+            transform: scale(2);
+        }
+
+        /* Estilos Carrito */
+        #cartDrawer {
+            transform: translateX(100%);
+            transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        #cartDrawer.open {
+            transform: translateX(0);
         }
     </style>
 </head>
@@ -146,8 +155,38 @@
             <a href="#view-terminal" class="nav-link">Pagar</a>
         </div>
 
-        <div class="text-[8px] md:text-[9px] opacity-40 uppercase font-mono tracking-widest">System: Active_v2.0</div>
+        <div class="flex items-center gap-6">
+            <div class="relative cursor-pointer group" onclick="toggleCart()">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="group-hover:scale-110 transition-transform"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z"/><path d="M3 6h18"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
+                <span id="cartCount" class="absolute -top-2 -right-2 bg-white text-black text-[8px] font-black w-4 h-4 rounded-full flex items-center justify-center">0</span>
+            </div>
+            <div class="text-[8px] md:text-[9px] opacity-40 uppercase font-mono tracking-widest hidden sm:block">System: Active_v2.0</div>
+        </div>
     </nav>
+
+    <!-- CARRITO DRAWER -->
+    <div id="cartOverlay" class="fixed inset-0 bg-black/80 z-[200] opacity-0 pointer-events-none transition-opacity duration-300" onclick="toggleCart()"></div>
+    <aside id="cartDrawer" class="fixed top-0 right-0 h-full w-full max-w-md bg-zinc-950 z-[201] border-l border-white/10 flex flex-col">
+        <div class="p-8 flex justify-between items-center border-b border-white/5">
+            <h3 class="header-font text-xl italic font-bold">TU_ORDEN</h3>
+            <button onclick="toggleCart()" class="text-[10px] opacity-40 hover:opacity-100 tracking-widest">CLOSE [X]</button>
+        </div>
+        
+        <div id="cartItems" class="flex-1 overflow-y-auto p-8 space-y-6">
+            <!-- Productos del carrito -->
+            <div class="text-center py-20 opacity-20 text-[10px] tracking-widest uppercase">El carrito está vacío</div>
+        </div>
+
+        <div class="p-8 border-t border-white/10 space-y-6 bg-zinc-900/30">
+            <div class="flex justify-between items-end">
+                <span class="text-[10px] opacity-40 uppercase tracking-widest">Subtotal_Est</span>
+                <span id="cartTotal" class="header-font text-2xl font-bold">$0</span>
+            </div>
+            <button onclick="goToCheckout()" class="w-full bg-white text-black py-5 text-xs font-bold uppercase tracking-[0.3em] hover:invert transition-all">
+                FINALIZAR_PEDIDO
+            </button>
+        </div>
+    </aside>
 
     <!-- SECCIÓN 01: HOME -->
     <section id="view-home" class="min-h-screen flex items-center px-6 md:px-20 relative overflow-hidden">
@@ -189,9 +228,7 @@
                         
                         <div class="mb-6">
                             <p class="text-[9px] uppercase opacity-40 mb-3 tracking-widest">TIPO DE PRENDA</p>
-                            <div class="grid grid-cols-3 gap-2" id="garmentTypeSelector">
-                                <!-- Se renderizan dinámicamente según el personaje -->
-                            </div>
+                            <div class="grid grid-cols-3 gap-2" id="garmentTypeSelector"></div>
                         </div>
 
                         <div class="mb-8">
@@ -221,7 +258,6 @@
 
                 <div class="lg:col-span-5 order-1 lg:order-2 reveal">
                     <div class="relative group">
-                        <!-- Contenedor con Zoom -->
                         <div id="zoomContainer" class="glass-panel aspect-[4/5] overflow-hidden relative border border-white/10" onmousemove="handleZoom(event)" onmouseleave="resetZoom()">
                             <img id="entityImage" src="" class="w-full h-full object-cover">
                             <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent pointer-events-none"></div>
@@ -244,9 +280,9 @@
                         <div class="p-4 border border-white/10 text-[8px] md:text-[9px] uppercase tracking-tighter opacity-40 text-center">
                             [!] NFC Authenticity Tag Included. Industrial Vacuum Packaging.
                         </div>
-                        <a href="#view-terminal" class="block text-center bg-white text-black font-bold py-5 text-xs uppercase tracking-widest hover:invert transition-all">
-                            ORDENA_AHORA
-                        </a>
+                        <button onclick="addToCart()" class="w-full block text-center bg-white text-black font-bold py-5 text-xs uppercase tracking-widest hover:invert transition-all">
+                            AÑADIR_AL_CARRITO
+                        </button>
                     </div>
                 </div>
             </div>
@@ -316,7 +352,7 @@
                     </div>
                 </div>
                 <div class="flex flex-col justify-between border-t-2 md:border-t-0 md:border-l-4 border-black pt-8 md:pt-0 md:pl-10">
-                    <p class="text-[11px] md:text-xs font-bold uppercase leading-relaxed tracking-wider">Transfiere el monto de la unidad seleccionada y envía el comprobante por WhatsApp para validación inmediata.</p>
+                    <p class="text-[11px] md:text-xs font-bold uppercase leading-relaxed tracking-wider">Transfiere el monto total del carrito y envía el comprobante para validación inmediata.</p>
                     <button id="mainOrderBtn" onclick="sendOrder()" class="mt-8 md:mt-10 bg-black text-white py-6 md:py-8 px-8 md:px-10 header-font text-lg md:text-xl uppercase italic hover:scale-[1.02] transition-transform active:scale-95">VALIDATE_PAYMENT</button>
                 </div>
             </div>
@@ -326,6 +362,7 @@
     <div id="toast" class="fixed bottom-10 left-1/2 -translate-x-1/2 bg-white text-black px-8 py-4 text-[9px] md:text-[10px] font-bold uppercase tracking-[0.3em] translate-y-32 transition-transform duration-500 z-[1000] border-2 border-black whitespace-nowrap shadow-2xl">Data_Copied_Successfully</div>
 
     <script>
+        // Configuración de Datos
         const IMAGE_MAP = {
             broly: {
                 tshirt: {
@@ -374,7 +411,6 @@
                 }
             }
         };
-
         const DATABASE = {
             entities: {
                 broly: { name: "BROLY", desc: "ENTITY_01: Poder desatado. Fit masivo con construcción de hombros caídos y tela de alto gramaje.", stats: [98, 95, 80, 90] },
@@ -391,12 +427,15 @@
             hoodie: ["Negro"]
         };
 
+        // Estado de la Aplicación
         let radarChart;
         let currentEntity = 'broly';
         let currentSize = 'M';
         let currentGarment = 'tshirt';
         let currentColor = 'Negro';
         let currentView = 'front';
+        
+        let cart = [];
 
         window.onload = () => {
             renderCatalogButtons();
@@ -404,23 +443,136 @@
             syncEntity('broly');
             setupScrollSpy();
             revealOnScroll();
+            updateCartUI();
         };
 
-        // Función para manejar el Zoom
+        // LÓGICA DE CARRITO
+        function toggleCart() {
+            const drawer = document.getElementById('cartDrawer');
+            const overlay = document.getElementById('cartOverlay');
+            const isOpen = drawer.classList.contains('open');
+            
+            if (isOpen) {
+                drawer.classList.remove('open');
+                overlay.style.opacity = '0';
+                overlay.style.pointerEvents = 'none';
+            } else {
+                drawer.classList.add('open');
+                overlay.style.opacity = '1';
+                overlay.style.pointerEvents = 'auto';
+            }
+        }
+
+        function addToCart() {
+            const product = {
+                id: Date.now(),
+                entity: currentEntity,
+                name: DATABASE.entities[currentEntity].name,
+                garment: currentGarment,
+                size: currentSize,
+                color: currentColor,
+                price: PRICES[currentGarment],
+                qty: 1
+            };
+
+            // Verificar si ya existe el mismo item (mismo modelo, prenda, talla y color)
+            const existing = cart.find(i => 
+                i.entity === product.entity && 
+                i.garment === product.garment && 
+                i.size === product.size && 
+                i.color === product.color
+            );
+
+            if (existing) {
+                existing.qty++;
+            } else {
+                cart.push(product);
+            }
+
+            updateCartUI();
+            toggleCart();
+        }
+
+        function removeFromCart(id) {
+            cart = cart.filter(item => item.id !== id);
+            updateCartUI();
+        }
+
+        function changeQty(id, delta) {
+            const item = cart.find(i => i.id === id);
+            if (item) {
+                item.qty += delta;
+                if (item.qty <= 0) removeFromCart(id);
+                else updateCartUI();
+            }
+        }
+
+        function updateCartUI() {
+            const container = document.getElementById('cartItems');
+            const countLabel = document.getElementById('cartCount');
+            const totalLabel = document.getElementById('cartTotal');
+
+            if (cart.length === 0) {
+                container.innerHTML = `<div class="text-center py-20 opacity-20 text-[10px] tracking-widest uppercase">El carrito está vacío</div>`;
+                countLabel.innerText = '0';
+                totalLabel.innerText = '$0';
+                return;
+            }
+
+            let total = 0;
+            let count = 0;
+            container.innerHTML = '';
+
+            cart.forEach(item => {
+                total += item.price * item.qty;
+                count += item.qty;
+
+                const div = document.createElement('div');
+                div.className = "glass-panel p-4 flex gap-4 border border-white/5";
+                div.innerHTML = `
+                    <div class="w-16 h-16 bg-zinc-900 border border-white/10 flex items-center justify-center text-[10px] font-bold italic">
+                        ${item.name.substring(0,2)}
+                    </div>
+                    <div class="flex-1">
+                        <div class="flex justify-between items-start mb-1">
+                            <span class="text-[11px] font-bold header-font">${item.name}</span>
+                            <button onclick="removeFromCart(${item.id})" class="text-[8px] opacity-30 hover:opacity-100">REMOVE</button>
+                        </div>
+                        <div class="text-[9px] opacity-40 uppercase tracking-tighter mb-3">
+                            ${item.garment} / ${item.color} / SIZE_${item.size}
+                        </div>
+                        <div class="flex justify-between items-center">
+                            <div class="flex items-center gap-3 border border-white/10 px-2 py-1">
+                                <button onclick="changeQty(${item.id}, -1)" class="text-xs">-</button>
+                                <span class="text-[10px] font-bold w-4 text-center">${item.qty}</span>
+                                <button onclick="changeQty(${item.id}, 1)" class="text-xs">+</button>
+                            </div>
+                            <span class="text-[11px] font-bold">$${(item.price * item.qty).toLocaleString('es-CO')}</span>
+                        </div>
+                    </div>
+                `;
+                container.appendChild(div);
+            });
+
+            countLabel.innerText = count;
+            totalLabel.innerText = `$${total.toLocaleString('es-CO')}`;
+        }
+
+        function goToCheckout() {
+            if (cart.length === 0) return;
+            toggleCart();
+            window.location.hash = "view-terminal";
+        }
+
+        // LÓGICA DE ZOOM
         function handleZoom(e) {
             const container = e.currentTarget;
             const img = document.getElementById('entityImage');
-            
-            // Obtener coordenadas relativas al contenedor
             const rect = container.getBoundingClientRect();
             const x = e.clientX - rect.left;
             const y = e.clientY - rect.top;
-            
-            // Calcular porcentaje de posición
             const xPercent = (x / rect.width) * 100;
             const yPercent = (y / rect.height) * 100;
-            
-            // Mover el origen de transformación según el cursor
             img.style.transformOrigin = `${xPercent}% ${yPercent}%`;
         }
 
@@ -429,6 +581,7 @@
             img.style.transformOrigin = "center center";
         }
 
+        // LÓGICA DE CATÁLOGO
         function renderCatalogButtons() {
             const container = document.getElementById('entityGrid');
             container.innerHTML = ''; 
@@ -602,10 +755,21 @@
         }
 
         function sendOrder() {
-            const entity = DATABASE.entities[currentEntity];
-            const price = PRICES[currentGarment];
-            const text = encodeURIComponent(`[RESILIENT_STREAM]: Hola, quiero validar mi pedido.\nUnidad: ${entity.name}\nPrenda: ${currentGarment.toUpperCase()}\nColor: ${currentColor.toUpperCase()}\nTalla: ${currentSize}\nPrecio: $${price.toLocaleString('es-CO')}`);
-            window.open(`https://wa.me/573147654816?text=${text}`, '_blank');
+            if (cart.length === 0) {
+                alert("El carrito está vacío.");
+                return;
+            }
+            
+            let message = "[RESILIENT_STREAM]: Hola, quiero validar mi pedido.\n\n";
+            let total = 0;
+            
+            cart.forEach(item => {
+                message += `- ${item.name} (${item.garment}) x${item.qty}\n  Color: ${item.color} | Talla: ${item.size}\n  Subtotal: $${(item.price * item.qty).toLocaleString('es-CO')}\n\n`;
+                total += item.price * item.qty;
+            });
+            
+            message += `TOTAL A PAGAR: $${total.toLocaleString('es-CO')}`;
+            window.open(`https://wa.me/573147654816?text=${encodeURIComponent(message)}`, '_blank');
         }
 
         function setupScrollSpy() {
@@ -630,5 +794,6 @@
     </script>
 </body>
 </html>
+
 
 
